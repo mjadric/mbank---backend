@@ -9,7 +9,9 @@ const routes = require('./routes');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://red-pebble-0185a9003.5.azurestaticapps.net'
+}));
 app.use(bodyParser.json());
 
 mongoose.connect(process.env.COSMOSDB_CONNECTION_STRING, {
