@@ -10,7 +10,7 @@ const routes = require('./routes');
 const app = express();
 
 app.use(cors({
-  origin: 'https://red-pebble-0185a9003.5.azurestaticapps.net'
+  origin: '*'
 }));
 app.use(bodyParser.json());
 
