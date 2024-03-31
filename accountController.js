@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
-const { User, Account, CreditCard, UserCreditCardRelation} = require('../model');
+const { User, Account, CreditCard, UserCreditCardRelation} = require('./model');
 const jwt = require('jsonwebtoken');
 
 const registration = async (req, res) => {

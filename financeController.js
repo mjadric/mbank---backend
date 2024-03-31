@@ -1,4 +1,4 @@
-const { User, CreditCard, UserCreditCardRelation, Transaction, Account  } = require('../model');
+const { User, CreditCard, UserCreditCardRelation, Transaction, Account  } = require('./model');
 const uuid = require('uuid');
 
 const getUserCards = async (req, res) => {
