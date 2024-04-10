@@ -1,30 +1,60 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors'); 
-
 require("dotenv").config();
-
-const routes = require('./routes');
+const path = require("path");
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
-app.use(cors()); 
-app.use(bodyParser.json());
+//connect to mongodb
+const { connectToMongoose } = require("./config/db");
 
+//middlewares
+//express json parser middleware
+app.use(express.json());
 
-mongoose.connect(process.env.DATABASE_URL);
+//cors middleware
+const { corsProOptions } = require("./config/corsConfig");
+app.use(cors(corsProOptions));
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB!');
-});
+// Apply the rate limiting middleware to API calls only
+const {
+  apiLimiter,
+} = require("./middlewares/rateLimitMiddleware/rateLimitMiddleware");
+app.use("/api", apiLimiter);
 
-app.use(routes);
+//users Router
+const usersRoute = require("./routes/usersRoutes");
+app.use("/api/users", usersRoute);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server sluša zahtjeve na portu ${PORT}`);
-});
+//admins Router
+const adminsRoute = require("./routes/adminRoutes");
+app.use("/api/admins", adminsRoute);
 
+//account Router
+const accountRoute = require("./routes/accountRoutes");
+app.use("/api/account", accountRoute);
+
+//account requests Router
+const accountRequestRoute = require("./routes/accountRequestRoutes");
+app.use("/api/request", accountRequestRoute);
+
+//serve Frontend
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, "../", "Frontend", "dist", "index.html")
+    )
+  );
+}
+
+connectToMongoose()
+  .then(() => {
+    app.listen(process.env.PORT || 5000, () => {
+      console.log("server is running");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
