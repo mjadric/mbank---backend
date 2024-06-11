@@ -8,7 +8,6 @@ const routes = require('./routes');
 
 const app = express();
 
-// Configure CORS to allow requests from specific origin
 const corsOptions = {
   origin: 'https://blue-coast-027388e03.5.azurestaticapps.net/',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
